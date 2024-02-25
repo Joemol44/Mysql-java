@@ -1,6 +1,5 @@
 package projects;
 
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -11,13 +10,19 @@ import projects.exception.DbException;
 import projects.service.ProjectService;
 
 public class ProjectsApp {
-		private Scanner scanner = new Scanner(System.in);
-		private ProjectService projectService = new ProjectService();
+
+	private Scanner scanner = new Scanner(System.in);
+	private ProjectService projectService = new ProjectService();
+	private Project curProject;
 		
-		// @formatter:off
-		private List<String> operations = List.of("1) Add a project"
-);
-		// @formatter:on
+	
+	
+			private List<String> operations = List.of(
+					"1) Add a project",
+					"2) List of projects",
+					"3) Select a project"
+	);
+			
 
 
 	public static void main(String[] args) {
@@ -25,7 +30,7 @@ public class ProjectsApp {
 	}
 	
 	
-private void processUserSelections() {
+public void processUserSelections() {
 	boolean done = false; 
 	
 	while(!done) {
@@ -34,22 +39,29 @@ private void processUserSelections() {
 			
 			switch(selection) {
 			case -1:
-			done = exitmenu();
+			done = exitMenu();
 			break;
 			
 			case 1:
 				createProject();
 				break;
 				
-				default: System.out.println("\n" + selection + " is not a valid selection. try again.");
+			case 2:
+				listProjects();
 				break;
+				
+			case 3:
+				selectProject();
+				break;
+				default: System.out.println("\n" + selection + " is not a valid selection. try again.");
+				
 			}
-		}
+		} 
 		catch(Exception e) {
-			System.out.println("\nError: " + e + "Try again.");
+			System.out.println("\nError: " + e + " Try again.");
 		}
 	}
-	}
+}
 
 
 private void createProject() {
@@ -125,15 +137,47 @@ private void printOperations() {
 	System.out.println("\nThese are the available selections. Press the Enter key to quit:");
 	
 	operations.forEach(line -> System.out.println(" " + line));
-//	if (Objects.isNull(currentProject)) {
-//		System.out.println("\nYou do not have an active project.");
-//	} else {
-//		System.out.println("\n You are viewing: " + currentProject);
-//	}
+	if (Objects.isNull(curProject)) {
+		System.out.println("\nYou do not have an active project.");
+	} else {
+		System.out.println("\n You are viewing: " + curProject);
+	}
 	
 	
+
+}
+
+
+
+
+
+private void selectProject() {
+	listProjects();
+	Integer projectId = getIntInput("Enter a project ID to select a project");
+	
+	curProject = null;
+	
+	curProject = projectService.fetchProjectById(projectId);
+}
+
+
+private void listProjects() {
+List<Project> projects = projectService.fetchAllProjects();
+	
+	System.out.println("\nProjects:");
+	
+		projects.forEach(project -> System.out
+				.println(" " + project.getProjectId()
+				+ ": " + project.getProjectName()));
+}
+
+
+private boolean exitMenu() {
+	// TODO Auto-generated method stub
+	return false;
 }
 }
+
 
 
 
